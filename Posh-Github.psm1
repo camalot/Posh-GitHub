@@ -920,6 +920,42 @@ function Get-GitHubTeams
   }
 }
 
+function Set-GitHubRepositoryTeamPermission {
+  param(
+    [Parameter(Mandatory = $true)]
+    [int]
+    $TeamId
+    [Parameter(Mandatory = $true, ParameterSetName='org')]
+    [string]
+    $Organization = $Env:GITHUB_ORG,
+    [Parameter(Mandatory = $true, ParameterSetName='org')]
+    [string]
+    $Repository
+    [ValidateSet("pull", "push", "admin")]
+    $Permission
+  )
+
+  $token = "?access_token=${Env:\GITHUB_OAUTH_TOKEN}"
+
+  $postData = @{ permission = $Permission }
+
+  $uri = "https://api.github.com/teams/$TeamId/repos/$Organization/repos/$Repository$token"
+  try
+  {
+    $params = @{
+      Uri = $uri;
+      Method = 'PUT';
+      ContentType = 'application/json';
+      Body = (ConvertTo-Json $postData -Compress)
+    }
+    Invoke-RestMethod @params | Out-Null;
+  }
+  catch
+  {
+    Write-Error "An unexpected error occurred $($Error[0])"
+  }
+}
+
 function New-GitHubRepository
 {
   [CmdletBinding(DefaultParameterSetName='user')]
