@@ -939,7 +939,7 @@ function Set-GitHubRepositoryTeamPermission {
 
   $postData = @{ permission = $Permission }
 
-  $uri = "https://api.github.com/teams/$TeamId/repos/$Organization/repos/$Repository$token"
+  $uri = "https://api.github.com/teams/$TeamId/repos/$Organization/$Repository$token"
   try
   {
     $params = @{
